@@ -24,4 +24,6 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.post('/', userController.createUser);
+
 module.exports = router;
