@@ -44,6 +44,33 @@ const userController = {
     }
   },
 
+  getUserById: async (req, res) => {
+    try {
+      const result = await User.findByPk(req.params.id);
+      if (!result) {
+        res.status(404).json({
+          status: 'error',
+          message: 'user not found',
+        });
+        return;
+      }
+      res.status(200).json({
+        status: 'success',
+        data: {
+          id: result.id,
+          firstName: result.firstName,
+          lastName: result.lastName,
+          email: result.email,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: 'error',
+        message: error,
+      });
+    }
+  },
+
   createUser: async (req, res) => {
     try {
       const [{
