@@ -1,106 +1,86 @@
-CREATE DATABASE `events-tickets-marketplace`;
-
-USE `events-tickets-marketplace`;
-
-CREATE TABLE `users` (
-  `id` varchar(255) UNIQUE PRIMARY KEY NOT NULL,
-  `first_name` varchar(255) NOT NULL,
-  `last_name` varchar(255) NOT NULL,
+CREATE TABLE `Users` (
+  `id` varchar(255) PRIMARY KEY,
+  `firstName` varchar(255) NOT NULL,
+  `lastName` varchar(255) NOT NULL,
   `email` varchar(255) UNIQUE NOT NULL,
   `password` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL,
-  `last_update` timestamp NOT NULL
+  `createdAt` timestamp NOT NULL,
+  `updatedAt` timestamp NOT NULL
 );
 
-CREATE TABLE `referral_activities` (
-  `referrer_user_id` varchar(255) NOT NULL,
-  `referred_user_id` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL,
-  PRIMARY KEY (`referrer_user_id`, `referred_user_id`)
+CREATE TABLE `ReferralActions` (
+  `referrerUserId` varchar(255),
+  `referredUserId` varchar(255) UNIQUE,
+  `createdAt` timestamp NOT NULL,
+  `updatedAt` timestamp NOT NULL,
+  PRIMARY KEY (`referrerUserId`, `referredUserId`)
 );
 
-CREATE TABLE `referrals` (
-  `user_id` varchar(255) UNIQUE PRIMARY KEY NOT NULL,
+CREATE TABLE `Referrals` (
+  `userId` varchar(255) PRIMARY KEY,
   `code` varchar(255) UNIQUE NOT NULL,
   `point` float NOT NULL,
-  `claimed_point` float NOT NULL
+  `createdAt` timestamp NOT NULL,
+  `updatedAt` timestamp NOT NULL
 );
 
-CREATE TABLE `events` (
-  `id` varchar(255) UNIQUE PRIMARY KEY NOT NULL,
-  `user_id` varchar(255) NOT NULL,
+CREATE TABLE `Events` (
+  `id` varchar(255) PRIMARY KEY,
+  `userId` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
-  `image_url` text NOT NULL,
+  `imageUrl` text NOT NULL,
   `city` varchar(255) NOT NULL,
   `address` text NOT NULL,
   `description` text NOT NULL,
   `price` float NOT NULL,
-  `start_at` timestamp NOT NULL,
-  `created_at` timestamp NOT NULL,
-  `last_update` timestamp NOT NULL,
   `stock` integer NOT NULL,
-  `claimed_stock` integer NOT NULL
+  `startAt` timestamp NOT NULL,
+  `createdAt` timestamp NOT NULL,
+  `updatedAt` timestamp NOT NULL
 );
 
-CREATE TABLE `vouchers` (
-  `event_id` varchar(255) NOT NULL,
-  `code` varchar(255) NOT NULL,
+CREATE TABLE `Vouchers` (
+  `eventId` varchar(255),
+  `code` varchar(255),
   `point` float NOT NULL,
   `stock` integer NOT NULL,
-  `claimed_stock` integer NOT NULL,
-  `created_at` timestamp NOT NULL,
-  `last_update` timestamp NOT NULL,
-  PRIMARY KEY (`event_id`, `code`)
+  `createdAt` timestamp NOT NULL,
+  `updatedAt` timestamp NOT NULL,
+  PRIMARY KEY (`eventId`, `code`)
 );
 
-CREATE TABLE `orders` (
-  `id` varchar(255) UNIQUE PRIMARY KEY NOT NULL,
-  `user_id` varchar(255) NOT NULL,
-  `event_id` varchar(255) NOT NULL,
+CREATE TABLE `Orders` (
+  `id` varchar(255) PRIMARY KEY,
+  `userId` varchar(255) NOT NULL,
+  `eventId` varchar(255) NOT NULL,
   `quantity` integer NOT NULL,
-  `voucher_point_usage` float NOT NULL,
-  `referral_point_usage` float NOT NULL,
-  `created_at` timestamp NOT NULL,
-  `is_paid` boolean NOT NULL
+  `voucherPointUsage` float NOT NULL,
+  `referralPointUsage` float NOT NULL,
+  `isPaid` boolean NOT NULL,
+  `createdAt` timestamp NOT NULL,
+  `updatedAt` timestamp NOT NULL
 );
 
-CREATE TABLE `reviews` (
-  `order_id` varchar(255) UNIQUE PRIMARY KEY NOT NULL,
-  `created_at` timestamp NOT NULL,
+CREATE TABLE `Reviews` (
+  `orderId` varchar(255) PRIMARY KEY,
   `comment` text NOT NULL,
-  `rating` float NOT NULL
+  `rating` float NOT NULL,
+  `createdAt` timestamp NOT NULL,
+  `updatedAt` timestamp NOT NULL
 );
 
-ALTER TABLE `referral_activities` ADD FOREIGN KEY (`referrer_user_id`) REFERENCES `users` (`id`);
+ALTER TABLE `Referrals` ADD FOREIGN KEY (`userId`) REFERENCES `Users` (`id`);
 
-ALTER TABLE `referral_activities` ADD FOREIGN KEY (`referred_user_id`) REFERENCES `users` (`id`);
+ALTER TABLE `ReferralActions` ADD FOREIGN KEY (`referrerUserId`) REFERENCES `Users` (`id`);
 
-ALTER TABLE `referrals` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+ALTER TABLE `ReferralActions` ADD FOREIGN KEY (`referredUserId`) REFERENCES `Users` (`id`);
 
-ALTER TABLE `events` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+ALTER TABLE `Events` ADD FOREIGN KEY (`userId`) REFERENCES `Users` (`id`);
 
-ALTER TABLE `vouchers` ADD FOREIGN KEY (`event_id`) REFERENCES `events` (`id`);
+ALTER TABLE `Orders` ADD FOREIGN KEY (`userId`) REFERENCES `Users` (`id`);
 
-ALTER TABLE `orders` ADD FOREIGN KEY (`event_id`) REFERENCES `events` (`id`);
+ALTER TABLE `Orders` ADD FOREIGN KEY (`eventId`) REFERENCES `Events` (`id`);
 
-ALTER TABLE `orders` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+ALTER TABLE `Vouchers` ADD FOREIGN KEY (`eventId`) REFERENCES `Events` (`id`);
 
-ALTER TABLE `reviews` ADD FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`);
-
-ALTER TABLE `users` MODIFY COLUMN `last_update` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
-    
-ALTER TABLE `events` MODIFY COLUMN `last_update` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
-
-ALTER TABLE `vouchers` MODIFY COLUMN `last_update` TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
-
-ALTER TABLE `users` MODIFY COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
-
-ALTER TABLE `referral_activities` MODIFY COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
-
-ALTER TABLE `events` MODIFY COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
-
-ALTER TABLE `vouchers` MODIFY COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
-
-ALTER TABLE `orders` MODIFY COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
-
-ALTER TABLE `reviews` MODIFY COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `Reviews` ADD FOREIGN KEY (`orderId`) REFERENCES `Orders` (`id`);
