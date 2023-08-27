@@ -21,11 +21,11 @@ const userController = {
   getUserByEmailAndPassword: async (req, res) => {
     try {
       const { email, password } = req.query;
-      const result = await User.findAll({
+      const result = await User.findOne({
         attributes: ['id', 'firstName', 'lastName', 'email'],
         where: { email, password },
       });
-      if (!result.length) {
+      if (!result) {
         res.status(404).json({
           status: 'error',
           message: 'user not found',
@@ -34,7 +34,7 @@ const userController = {
       }
       res.status(200).json({
         status: 'success',
-        data: result[0],
+        data: result,
       });
     } catch (error) {
       res.status(500).json({
