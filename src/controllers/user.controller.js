@@ -46,9 +46,19 @@ const userController = {
 
   createUser: async (req, res) => {
     try {
-      const {
+      const [{
         id, firstName, lastName, email,
-      } = await User.create({ ...req.body });
+      }, isCreated] = await User.findOrCreate({
+        where: { email: req.body.email },
+        defaults: { ...req.body },
+      });
+      if (!isCreated) {
+        res.status(400).json({
+          status: 'error',
+          message: 'email already exist',
+        });
+        return;
+      }
       res.status(201).json({
         status: 'success',
         data: {
