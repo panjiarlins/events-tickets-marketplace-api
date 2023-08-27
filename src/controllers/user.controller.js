@@ -17,6 +17,7 @@ const userController = {
       });
     }
   },
+
   getUserByEmailAndPassword: async (req, res) => {
     try {
       const { email, password } = req.query;
@@ -42,6 +43,7 @@ const userController = {
       });
     }
   },
+
   createUser: async (req, res) => {
     try {
       const {
@@ -53,6 +55,29 @@ const userController = {
           id, firstName, lastName, email,
         },
       });
+    } catch (error) {
+      res.status(500).json({
+        status: 'error',
+        message: error,
+      });
+    }
+  },
+
+  deleteUserById: async (req, res) => {
+    try {
+      const resullt = await User.destroy({
+        where: {
+          id: req.params.id,
+        },
+      });
+      if (!resullt) {
+        res.status(404).json({
+          status: 'error',
+          message: 'user not found',
+        });
+        return;
+      }
+      res.sendStatus(204);
     } catch (error) {
       res.status(500).json({
         status: 'error',

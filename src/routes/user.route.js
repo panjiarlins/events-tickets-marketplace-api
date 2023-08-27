@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
     });
   }
 });
-
 router.post('/', userController.createUser);
+router.delete('/:id', userController.deleteUserById);
 
 module.exports = router;
