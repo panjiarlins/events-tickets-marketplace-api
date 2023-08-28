@@ -1,10 +1,14 @@
-const { User } = require('../models');
+const { User, Referral, sequelize } = require('../models');
 
 const userController = {
   getAllUsers: async (req, res) => {
     try {
       const result = await User.findAll({
         attributes: ['id', 'firstName', 'lastName', 'email'],
+        include: [{
+          model: Referral,
+          attributes: ['code'],
+        }],
       });
       res.status(200).json({
         status: 'success',
@@ -24,6 +28,10 @@ const userController = {
       const result = await User.findOne({
         attributes: ['id', 'firstName', 'lastName', 'email'],
         where: { email, password },
+        include: [{
+          model: Referral,
+          attributes: ['code'],
+        }],
       });
       if (!result) {
         res.status(404).json({
@@ -46,7 +54,13 @@ const userController = {
 
   getUserById: async (req, res) => {
     try {
-      const result = await User.findByPk(req.params.id);
+      const result = await User.findByPk(req.params.id, {
+        attributes: ['id', 'firstName', 'lastName', 'email'],
+        include: [{
+          model: Referral,
+          attributes: ['code'],
+        }],
+      });
       if (!result) {
         res.status(404).json({
           status: 'error',
@@ -56,12 +70,7 @@ const userController = {
       }
       res.status(200).json({
         status: 'success',
-        data: {
-          id: result.id,
-          firstName: result.firstName,
-          lastName: result.lastName,
-          email: result.email,
-        },
+        data: result,
       });
     } catch (error) {
       res.status(500).json({
@@ -73,24 +82,34 @@ const userController = {
 
   createUser: async (req, res) => {
     try {
-      const [{
-        id, firstName, lastName, email,
-      }, isCreated] = await User.findOrCreate({
-        where: { email: req.body.email },
-        defaults: { ...req.body },
-      });
-      if (!isCreated) {
-        res.status(400).json({
-          status: 'error',
-          message: 'email already exist',
+      await sequelize.transaction(async (t) => {
+        const [userData, isCreated] = await User.findOrCreate({
+          where: { email: req.body.email },
+          defaults: { ...req.body },
+          transaction: t,
         });
-        return;
-      }
-      res.status(201).json({
-        status: 'success',
-        data: {
+
+        if (!isCreated) {
+          res.status(400).json({
+            status: 'error',
+            message: 'email already exist',
+          });
+          return;
+        }
+
+        const {
           id, firstName, lastName, email,
-        },
+        } = userData;
+        const { code } = await userData.createReferral({
+          code: `REF-${email}`,
+        }, { transaction: t });
+
+        res.status(201).json({
+          status: 'success',
+          data: {
+            id, firstName, lastName, email, code,
+          },
+        });
       });
     } catch (error) {
       res.status(500).json({
@@ -102,12 +121,12 @@ const userController = {
 
   deleteUserById: async (req, res) => {
     try {
-      const resullt = await User.destroy({
+      const result = await User.destroy({
         where: {
           id: req.params.id,
         },
       });
-      if (!resullt) {
+      if (!result) {
         res.status(404).json({
           status: 'error',
           message: 'user not found',
