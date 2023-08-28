@@ -3,7 +3,7 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class Referral extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,39 +11,31 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.User.hasOne(models.Referral, {
+      models.Referral.belongsTo(models.User, {
         foreignKey: 'userId',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
     }
   }
-  User.init({
-    id: {
+  Referral.init({
+    userId: {
       type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    firstName: {
+    code: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: 'code',
     },
-    lastName: {
-      type: DataTypes.STRING,
+    point: {
+      type: DataTypes.FLOAT,
       allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: 'email',
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      defaultValue: 0,
     },
   }, {
     sequelize,
-    modelName: 'User',
+    modelName: 'Referral',
   });
-  return User;
+  return Referral;
 };
