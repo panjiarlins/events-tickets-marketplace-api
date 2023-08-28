@@ -1,8 +1,6 @@
 'use strict';
 
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Event extends Model {
@@ -13,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      models.Event.belongsTo(models.User, {
+        foreignKey: {
+          name: 'userId',
+          allowNull: false,
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
     }
   }
   Event.init({
@@ -21,11 +27,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     imageUrl: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT('long'),
       allowNull: false,
     },
     city: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     address: {
@@ -33,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     description: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT('long'),
       allowNull: false,
     },
     price: {

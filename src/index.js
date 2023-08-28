@@ -10,7 +10,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/users', routers.userRouter);
-
 app.use('/events', routers.eventRouter);
 app.use('/reviews', routers.reviewRouter);
 app.use('/vouchers', routers.voucherRouter);
