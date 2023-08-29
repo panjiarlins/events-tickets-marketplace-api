@@ -1,14 +1,18 @@
-const { User, Referral, sequelize } = require('../models');
+const {
+  sequelize, User, Referral, Event,
+} = require('../models');
 
 const userController = {
   getAllUsers: async (req, res) => {
     try {
       const result = await User.findAll({
-        attributes: ['id', 'firstName', 'lastName', 'email'],
-        include: [{
-          model: Referral,
-          attributes: ['code'],
-        }],
+        attributes: {
+          exclude: ['password'],
+        },
+        include: [
+          { model: Referral },
+          { model: Event },
+        ],
       });
       res.status(200).json({
         status: 'success',
@@ -28,10 +32,6 @@ const userController = {
       const result = await User.findOne({
         attributes: ['id', 'firstName', 'lastName', 'email'],
         where: { email, password },
-        include: [{
-          model: Referral,
-          attributes: ['code'],
-        }],
       });
       if (!result) {
         res.status(404).json({
@@ -55,11 +55,13 @@ const userController = {
   getUserById: async (req, res) => {
     try {
       const result = await User.findByPk(req.params.id, {
-        attributes: ['id', 'firstName', 'lastName', 'email'],
-        include: [{
-          model: Referral,
-          attributes: ['code'],
-        }],
+        attributes: {
+          exclude: ['password'],
+        },
+        include: [
+          { model: Referral },
+          { model: Event },
+        ],
       });
       if (!result) {
         res.status(404).json({
@@ -85,7 +87,7 @@ const userController = {
       await sequelize.transaction(async (t) => {
         const [userData, isCreated] = await User.findOrCreate({
           where: { email: req.body.email },
-          defaults: { ...req.body },
+          defaults: req.body,
           transaction: t,
         });
 
@@ -100,9 +102,10 @@ const userController = {
         const {
           id, firstName, lastName, email,
         } = userData;
-        const { code } = await userData.createReferral({
-          code: `REF-${email}`,
-        }, { transaction: t });
+        const { code } = await userData.createReferral(
+          { code: `REF-${email}` },
+          { transaction: t },
+        );
 
         res.status(201).json({
           status: 'success',
