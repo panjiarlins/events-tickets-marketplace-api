@@ -12,17 +12,16 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       models.Referral.belongsTo(models.User, {
-        foreignKey: 'userId',
+        foreignKey: {
+          name: 'userId',
+          primaryKey: true,
+        },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
     }
   }
   Referral.init({
-    userId: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-    },
     code: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -37,5 +36,8 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Referral',
   });
+
+  Referral.removeAttribute('id');
+
   return Referral;
 };
