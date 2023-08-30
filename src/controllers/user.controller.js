@@ -1,5 +1,5 @@
 const {
-  sequelize, User, Referral, Event,
+  sequelize, User, Referral, Event, Voucher,
 } = require('../models');
 
 const userController = {
@@ -11,7 +11,10 @@ const userController = {
         },
         include: [
           { model: Referral },
-          { model: Event },
+          {
+            model: Event,
+            include: [{ model: Voucher }],
+          },
         ],
       });
       res.status(200).json({
@@ -60,7 +63,10 @@ const userController = {
         },
         include: [
           { model: Referral },
-          { model: Event },
+          {
+            model: Event,
+            include: [{ model: Voucher }],
+          },
         ],
       });
       if (!result) {
