@@ -11,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      models.Order.hasOne(models.Review, {
+        foreignKey: {
+          name: 'orderId',
+          primaryKey: true,
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
       models.Order.belongsTo(models.User, {
         foreignKey: {
           name: 'userId',
