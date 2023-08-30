@@ -11,8 +11,9 @@ app.use(cors());
 app.use(express.json());
 app.use('/users', routers.userRouter);
 app.use('/events', routers.eventRouter);
-app.use('/reviews', routers.reviewRouter);
 app.use('/vouchers', routers.voucherRouter);
+app.use('/orders', routers.orderRouter);
+app.use('/reviews', routers.reviewRouter);
 
 app.listen(PORT, () => {
   console.log(`Server started on port:${PORT}`);
