@@ -67,19 +67,21 @@ const userController = {
     try {
       const { email, password } = req.query;
       const result = await User.findOne({
-        attributes: ['id', 'firstName', 'lastName', 'email'],
-        where: { email, password },
+        attributes: ['id', 'firstName', 'lastName', 'email', 'password'],
+        where: { email },
       });
-      if (!result) {
-        res.status(404).json({
+      const isValid = await bcrypt.compare(password, result.password);
+      if (!isValid) {
+        res.status(400).json({
           status: 'error',
-          message: 'user not found',
+          message: 'wrong email/password',
         });
         return;
       }
+      delete result.dataValues.password;
       res.status(200).json({
         status: 'success',
-        data: result,
+        data: result.toJSON(),
       });
     } catch (error) {
       res.status(500).json({
