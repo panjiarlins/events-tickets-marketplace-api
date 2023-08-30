@@ -12,17 +12,16 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       models.Voucher.belongsTo(models.Event, {
-        foreignKey: 'eventId',
+        foreignKey: {
+          name: 'eventId',
+          primaryKey: true,
+        },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
     }
   }
   Voucher.init({
-    eventId: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-    },
     code: {
       type: DataTypes.STRING,
       primaryKey: true,

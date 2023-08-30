@@ -20,7 +20,10 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: 'CASCADE',
       });
       models.Event.hasMany(models.Voucher, {
-        foreignKey: 'eventId',
+        foreignKey: {
+          name: 'eventId',
+          primaryKey: true,
+        },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
