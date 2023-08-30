@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
       return;
     }
     if (size(req.query) === 2 && req.query.email && req.query.password) {
-      await userController.getUserByEmailAndPassword(req, res);
+      await userController.loginUser(req, res);
       return;
     }
     res.status(400).json({
@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
   }
 });
 router.get('/:id', userController.getUserById);
-router.post('/', userController.createUser);
+router.post('/', userController.registerUser);
 router.delete('/:id', userController.deleteUserById);
 
 module.exports = router;
