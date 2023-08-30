@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const {
   sequelize, User, Referral, Event, Voucher,
 } = require('../models');
@@ -17,32 +18,6 @@ const userController = {
           },
         ],
       });
-      res.status(200).json({
-        status: 'success',
-        data: result,
-      });
-    } catch (error) {
-      res.status(500).json({
-        status: 'error',
-        message: error,
-      });
-    }
-  },
-
-  getUserByEmailAndPassword: async (req, res) => {
-    try {
-      const { email, password } = req.query;
-      const result = await User.findOne({
-        attributes: ['id', 'firstName', 'lastName', 'email'],
-        where: { email, password },
-      });
-      if (!result) {
-        res.status(404).json({
-          status: 'error',
-          message: 'user not found',
-        });
-        return;
-      }
       res.status(200).json({
         status: 'success',
         data: result,
@@ -88,12 +63,42 @@ const userController = {
     }
   },
 
-  createUser: async (req, res) => {
+  loginUser: async (req, res) => {
+    try {
+      const { email, password } = req.query;
+      const result = await User.findOne({
+        attributes: ['id', 'firstName', 'lastName', 'email'],
+        where: { email, password },
+      });
+      if (!result) {
+        res.status(404).json({
+          status: 'error',
+          message: 'user not found',
+        });
+        return;
+      }
+      res.status(200).json({
+        status: 'success',
+        data: result,
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: 'error',
+        message: error,
+      });
+    }
+  },
+
+  registerUser: async (req, res) => {
     try {
       await sequelize.transaction(async (t) => {
+        const salt = await bcrypt.genSalt(10);
         const [userData, isCreated] = await User.findOrCreate({
           where: { email: req.body.email },
-          defaults: req.body,
+          defaults: {
+            ...req.body,
+            password: await bcrypt.hash(req.body.password, salt),
+          },
           transaction: t,
         });
 
