@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const {
   sequelize, User, Referral, Event, Voucher,
 } = require('../models');
+const jwtController = require('./jwt.controller');
 
 const userController = {
   getAllUsers: async (req, res) => {
@@ -72,16 +73,17 @@ const userController = {
       });
       const isValid = await bcrypt.compare(password, result.password);
       if (!isValid) {
-        res.status(400).json({
+        res.status(401).json({
           status: 'error',
           message: 'wrong email/password',
         });
         return;
       }
       delete result.dataValues.password;
+      const token = jwtController.generateToken(result.toJSON());
       res.status(200).json({
         status: 'success',
-        data: result.toJSON(),
+        data: { token },
       });
     } catch (error) {
       res.status(500).json({
