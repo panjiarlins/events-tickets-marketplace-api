@@ -12,7 +12,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       models.User.hasOne(models.Referral, {
-        foreignKey: 'userId',
+        foreignKey: {
+          name: 'userId',
+          primaryKey: true,
+        },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });

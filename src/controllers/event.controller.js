@@ -1,11 +1,13 @@
 const {
-  Sequelize, sequelize, User, Event,
+  Sequelize, sequelize, User, Event, Voucher,
 } = require('../models');
 
 const eventController = {
   getAllEvents: async (req, res) => {
     try {
-      const result = await Event.findAll();
+      const result = await Event.findAll({
+        include: [{ model: Voucher }],
+      });
       res.status(200).json({
         status: 'success',
         data: result,
@@ -20,7 +22,9 @@ const eventController = {
 
   getEventById: async (req, res) => {
     try {
-      const result = await Event.findByPk(req.params.id);
+      const result = await Event.findByPk(req.params.id, {
+        include: [{ model: Voucher }],
+      });
       if (!result) {
         res.status(404).json({
           status: 'error',
@@ -52,9 +56,7 @@ const eventController = {
         });
         return;
       }
-      const result = await Event.create(
-        req.body,
-      );
+      const result = await Event.create(req.body);
       res.status(201).json({
         status: 'success',
         data: result,
