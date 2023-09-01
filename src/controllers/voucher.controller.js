@@ -23,13 +23,7 @@ const voucherController = {
   getAllVouchersByEventId: async (req, res) => {
     try {
       const eventData = await Event.findByPk(req.params.eventId);
-      if (!eventData) {
-        res.status(404).json({
-          status: 'error',
-          message: 'event not found',
-        });
-        return;
-      }
+      if (!eventData) throw { code: 404, message: 'event not found' };
 
       const result = await eventData.getVouchers();
       res.status(200).json({
@@ -37,6 +31,13 @@ const voucherController = {
         data: result,
       });
     } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
+          status: 'error',
+          message: error.message,
+        });
+        return;
+      }
       res.status(500).json({
         status: 'error',
         message: error,

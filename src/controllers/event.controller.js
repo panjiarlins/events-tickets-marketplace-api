@@ -25,18 +25,20 @@ const eventController = {
       const result = await Event.findByPk(req.params.id, {
         include: [{ model: Voucher }],
       });
-      if (!result) {
-        res.status(404).json({
-          status: 'error',
-          message: 'event not found',
-        });
-        return;
-      }
+      if (!result) throw { code: 404, message: 'event not found' };
+
       res.status(200).json({
         status: 'success',
         data: result,
       });
     } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
+          status: 'error',
+          message: error.message,
+        });
+        return;
+      }
       res.status(500).json({
         status: 'error',
         message: error,
@@ -46,22 +48,22 @@ const eventController = {
 
   createEvent: async (req, res) => {
     try {
-      const userData = await User.findOne({
-        where: { id: req.body.userId },
-      });
-      if (!userData) {
-        res.status(400).json({
-          status: 'error',
-          message: 'userId not exist',
-        });
-        return;
-      }
+      const userData = await User.findByPk(req.body.userId);
+      if (!userData) throw { code: 404, message: 'user not found' };
+
       const result = await Event.create(req.body);
       res.status(201).json({
         status: 'success',
         data: result,
       });
     } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
+          status: 'error',
+          message: error.message,
+        });
+        return;
+      }
       res.status(500).json({
         status: 'error',
         message: error,
@@ -98,18 +100,17 @@ const eventController = {
 
   deleteEventById: async (req, res) => {
     try {
-      const result = await Event.destroy({
-        where: { id: req.params.id },
-      });
-      if (!result) {
-        res.status(404).json({
+      const result = await Event.destroy({ where: { id: req.params.id } });
+      if (!result) throw { code: 404, message: 'event not found' };
+      res.sendStatus(204);
+    } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
           status: 'error',
-          message: 'event not found',
+          message: error.message,
         });
         return;
       }
-      res.sendStatus(204);
-    } catch (error) {
       res.status(500).json({
         status: 'error',
         message: error,

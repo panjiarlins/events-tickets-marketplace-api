@@ -33,18 +33,20 @@ const orderController = {
           { model: Voucher },
         ],
       });
-      if (!result) {
-        res.status(404).json({
-          status: 'error',
-          message: 'order not found',
-        });
-        return;
-      }
+      if (!result) throw { code: 404, message: 'order not found' };
+
       res.status(200).json({
         status: 'success',
         data: result,
       });
     } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
+          status: 'error',
+          message: error.message,
+        });
+        return;
+      }
       res.status(500).json({
         status: 'error',
         message: error,

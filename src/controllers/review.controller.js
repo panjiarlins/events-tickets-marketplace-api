@@ -19,18 +19,20 @@ const reviewController = {
   getReviewByOrderId: async (req, res) => {
     try {
       const result = await Review.findByPk(req.params.id);
-      if (!result) {
-        res.status(404).json({
-          status: 'error',
-          message: 'review not found',
-        });
-        return;
-      }
+      if (!result) throw { code: 404, message: 'review not found' };
+
       res.status(200).json({
         status: 'success',
         data: result,
       });
     } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
+          status: 'error',
+          message: error.message,
+        });
+        return;
+      }
       res.status(500).json({
         status: 'error',
         message: error,
@@ -64,15 +66,17 @@ const reviewController = {
           id: req.params.id,
         },
       });
-      if (!result) {
-        res.status(404).json({
+      if (!result) throw { code: 404, message: 'user not found' };
+
+      res.sendStatus(204);
+    } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
           status: 'error',
-          message: 'user not found',
+          message: error.message,
         });
         return;
       }
-      res.sendStatus(204);
-    } catch (error) {
       res.status(500).json({
         status: 'error',
         message: error,
