@@ -61,30 +61,58 @@ const orderController = {
           userId, eventId, voucherCode, quantity,
         } = req.body;
 
+        // check user
         const userData = await User.findByPk(userId, { transaction: t });
         if (!userData) throw { code: 404, message: 'user not found' };
 
+        // check event
         const eventData = await Event.findByPk(eventId, { transaction: t });
         if (!eventData) throw { code: 404, message: 'event not found' };
 
-        if (eventData.stock - quantity < 0) throw { code: 400, message: 'stock not enough' };
+        // check event stock
+        if (eventData.stock - quantity < 0) throw { code: 400, message: 'event stock not enough' };
         await eventData.increment({ stock: -(quantity) }, { transaction: t });
 
+        let totalPayment = eventData.price * quantity;
         if (voucherCode) {
+          // check voucher
           const isVoucherValid = await eventData.hasVoucher(voucherCode, { transaction: t });
           const voucherData = await Voucher.findByPk(voucherCode, { transaction: t });
           if (!isVoucherValid || !voucherData) throw { code: 400, message: 'voucherCode invalid' };
+
+          // check voucher stock
+          if (voucherData.stock - 1 < 0) throw { code: 400, message: 'voucher out of stock' };
           await voucherData.increment({ stock: -1 }, { transaction: t });
+          totalPayment = Math.max(totalPayment - voucherData.point, 0);
         }
 
-        const result = await Order.create(req.body, {
-          fields: ['userId', 'eventId', 'quantity', 'voucherCode', 'referralPointUsage'],
-          transaction: t,
-        });
+        let referralPointUsage = 0;
+        const referralData = await userData.getReferral({ transaction: t });
+        if (referralData.point > 0 && totalPayment > 0) {
+          // referral point usage
+          totalPayment = Math.max(totalPayment - referralData.point, 0);
+          referralPointUsage = Math.min(totalPayment, referralData.point);
+          await referralData.increment({ point: -(referralPointUsage) }, { transaction: t });
+        }
+
+        // create order
+        const orderData = await Order.create(
+          {
+            ...req.body,
+            referralPointUsage,
+          },
+          {
+            fields: ['userId', 'eventId', 'quantity', 'voucherCode', 'referralPointUsage'],
+            transaction: t,
+          },
+        );
 
         res.status(201).json({
           status: 'success',
-          data: result,
+          data: {
+            ...orderData.toJSON(),
+            totalPayment,
+          },
         });
       });
     } catch (error) {
