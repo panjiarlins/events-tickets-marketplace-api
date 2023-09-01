@@ -35,17 +35,20 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
+      models.Order.belongsTo(models.Voucher, {
+        foreignKey: {
+          name: 'voucherCode',
+          allowNull: true,
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
     }
   }
   Order.init({
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
-    },
-    voucherPointUsage: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-      defaultValue: 0,
     },
     referralPointUsage: {
       type: DataTypes.FLOAT,

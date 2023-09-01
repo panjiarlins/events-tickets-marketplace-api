@@ -11,9 +11,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.Voucher.belongsTo(models.Event, {
+      models.Voucher.hasMany(models.Order, {
         foreignKey: {
-          name: 'eventId',
+          name: 'voucherCode',
+          allowNull: false,
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      models.Voucher.belongsToMany(models.Event, {
+        through: models.EventVoucher,
+        foreignKey: {
+          name: 'voucherCode',
           primaryKey: true,
         },
         onDelete: 'CASCADE',

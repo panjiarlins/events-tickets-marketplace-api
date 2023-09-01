@@ -25,7 +25,7 @@ CREATE TABLE `Referrals` (
 );
 
 CREATE TABLE `Events` (
-  `id` varchar(255) PRIMARY KEY,
+  `id` integer PRIMARY KEY,
   `userId` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
   `imageUrl` text NOT NULL,
@@ -40,21 +40,27 @@ CREATE TABLE `Events` (
 );
 
 CREATE TABLE `Vouchers` (
-  `eventId` varchar(255),
-  `code` varchar(255),
+  `code` varchar(255) PRIMARY KEY,
   `point` float NOT NULL,
   `stock` integer NOT NULL,
   `createdAt` timestamp NOT NULL,
+  `updatedAt` timestamp NOT NULL
+);
+
+CREATE TABLE `EventVouchers` (
+  `eventId` integer,
+  `voucherCode` varchar(255),
+  `createdAt` timestamp NOT NULL,
   `updatedAt` timestamp NOT NULL,
-  PRIMARY KEY (`eventId`, `code`)
+  PRIMARY KEY (`eventId`, `voucherCode`)
 );
 
 CREATE TABLE `Orders` (
-  `id` varchar(255) PRIMARY KEY,
+  `id` integer PRIMARY KEY,
   `userId` varchar(255) NOT NULL,
-  `eventId` varchar(255) NOT NULL,
+  `voucherCode` varchar(255) NOT NULL,
+  `eventId` integer NOT NULL,
   `quantity` integer NOT NULL,
-  `voucherPointUsage` float NOT NULL,
   `referralPointUsage` float NOT NULL,
   `isPaid` boolean NOT NULL,
   `createdAt` timestamp NOT NULL,
@@ -62,7 +68,7 @@ CREATE TABLE `Orders` (
 );
 
 CREATE TABLE `Reviews` (
-  `orderId` varchar(255) PRIMARY KEY,
+  `orderId` integer PRIMARY KEY,
   `comment` text NOT NULL,
   `rating` float NOT NULL,
   `createdAt` timestamp NOT NULL,
@@ -81,6 +87,10 @@ ALTER TABLE `Orders` ADD FOREIGN KEY (`userId`) REFERENCES `Users` (`id`);
 
 ALTER TABLE `Orders` ADD FOREIGN KEY (`eventId`) REFERENCES `Events` (`id`);
 
-ALTER TABLE `Vouchers` ADD FOREIGN KEY (`eventId`) REFERENCES `Events` (`id`);
+ALTER TABLE `EventVouchers` ADD FOREIGN KEY (`eventId`) REFERENCES `Events` (`id`);
+
+ALTER TABLE `EventVouchers` ADD FOREIGN KEY (`voucherCode`) REFERENCES `Vouchers` (`code`);
 
 ALTER TABLE `Reviews` ADD FOREIGN KEY (`orderId`) REFERENCES `Orders` (`id`);
+
+ALTER TABLE `Orders` ADD FOREIGN KEY (`voucherCode`) REFERENCES `Vouchers` (`code`);
