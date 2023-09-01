@@ -131,6 +131,31 @@ const orderController = {
       });
     }
   },
+
+  payOrder: async (req, res) => {
+    try {
+      const [orderData] = await Order.update({ isPaid: true }, { where: { id: req.params.id } });
+      console.log(orderData);
+      if (orderData === 0) throw { code: 404, message: 'order not found' };
+
+      res.status(200).json({
+        status: 'success',
+        data: orderData,
+      });
+    } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
+          status: 'error',
+          message: error.message,
+        });
+        return;
+      }
+      res.status(500).json({
+        status: 'error',
+        message: error,
+      });
+    }
+  },
 };
 
 module.exports = orderController;
