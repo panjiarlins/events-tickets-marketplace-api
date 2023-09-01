@@ -28,5 +28,6 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'import/extensions': 'off',
     'global-require': 'off',
+    'no-throw-literal': 'off',
   },
 };
