@@ -1,9 +1,9 @@
-const { Review } = require('../models');
+const { Review, Order } = require('../models');
 
 const reviewController = {
   getAllReviews: async (req, res) => {
     try {
-      const result = await Review.findAll();
+      const result = await Review.findAll({ include: [{ model: Order }] });
       res.status(200).json({
         status: 'success',
         data: result,
@@ -18,7 +18,7 @@ const reviewController = {
 
   getReviewByOrderId: async (req, res) => {
     try {
-      const result = await Review.findByPk(req.params.id);
+      const result = await Review.findByPk(req.params.orderId, { include: [{ model: Order }] });
       if (!result) throw { code: 404, message: 'review not found' };
 
       res.status(200).json({
@@ -42,16 +42,25 @@ const reviewController = {
 
   createReview: async (req, res) => {
     try {
-      const {
-        id, comment, rating,
-      } = await Review.create({ ...req.body });
+      const [result, isCreated] = await Review.findOrCreate({
+        where: { orderId: req.body.orderId },
+        defaults: req.body,
+        fields: ['orderId', 'comment', 'rating'],
+      });
+      if (!isCreated) throw { code: 400, message: 'review for this orderId already exist' };
+
       res.status(201).json({
         status: 'success',
-        data: {
-          id, comment, rating,
-        },
+        data: result,
       });
     } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
+          status: 'error',
+          message: error.message,
+        });
+        return;
+      }
       res.status(500).json({
         status: 'error',
         message: error,
@@ -61,11 +70,7 @@ const reviewController = {
 
   deleteReviewByOrderId: async (req, res) => {
     try {
-      const result = await Review.destroy({
-        where: {
-          id: req.params.id,
-        },
-      });
+      const result = await Review.destroy({ where: { orderId: req.params.orderId } });
       if (!result) throw { code: 404, message: 'user not found' };
 
       res.sendStatus(204);
