@@ -1,16 +1,14 @@
 const bcrypt = require('bcrypt');
+const jwtController = require('./jwt.controller');
 const {
   sequelize, User, Referral, Event, Voucher,
 } = require('../models');
-const jwtController = require('./jwt.controller');
 
 const userController = {
   getAllUsers: async (req, res) => {
     try {
       const result = await User.findAll({
-        attributes: {
-          exclude: ['password'],
-        },
+        attributes: { exclude: ['password'] },
         include: [
           { model: Referral },
           {
@@ -34,9 +32,7 @@ const userController = {
   getUserById: async (req, res) => {
     try {
       const result = await User.findByPk(req.params.id, {
-        attributes: {
-          exclude: ['password'],
-        },
+        attributes: { exclude: ['password'] },
         include: [
           { model: Referral },
           {
@@ -45,18 +41,20 @@ const userController = {
           },
         ],
       });
-      if (!result) {
-        res.status(404).json({
-          status: 'error',
-          message: 'user not found',
-        });
-        return;
-      }
+      if (!result) throw { code: 404, message: 'user not found' };
+
       res.status(200).json({
         status: 'success',
         data: result,
       });
     } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
+          status: 'error',
+          message: error.message,
+        });
+        return;
+      }
       res.status(500).json({
         status: 'error',
         message: error,
@@ -70,22 +68,26 @@ const userController = {
       const result = await User.findOne({
         attributes: ['id', 'firstName', 'lastName', 'email', 'password'],
         where: { email },
+        raw: true,
       });
       const isValid = await bcrypt.compare(password, result.password);
-      if (!isValid) {
-        res.status(401).json({
-          status: 'error',
-          message: 'wrong email/password',
-        });
-        return;
-      }
-      delete result.dataValues.password;
-      const token = jwtController.generateToken(result.toJSON());
+      if (!isValid) throw { code: 401, message: 'wrong email/password' };
+
+      delete result.password;
+      const token = jwtController.generateToken(result);
+      console.log('test', result);
       res.status(200).json({
         status: 'success',
         data: { token },
       });
     } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
+          status: 'error',
+          message: error.message,
+        });
+        return;
+      }
       res.status(500).json({
         status: 'error',
         message: error,
@@ -105,14 +107,7 @@ const userController = {
           },
           transaction: t,
         });
-
-        if (!isCreated) {
-          res.status(400).json({
-            status: 'error',
-            message: 'email already exist',
-          });
-          return;
-        }
+        if (!isCreated) throw { code: 400, message: 'email already exist' };
 
         const {
           id, firstName, lastName, email,
@@ -130,6 +125,13 @@ const userController = {
         });
       });
     } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
+          status: 'error',
+          message: error.message,
+        });
+        return;
+      }
       res.status(500).json({
         status: 'error',
         message: error,
@@ -139,20 +141,18 @@ const userController = {
 
   deleteUserById: async (req, res) => {
     try {
-      const result = await User.destroy({
-        where: {
-          id: req.params.id,
-        },
-      });
-      if (!result) {
-        res.status(404).json({
+      const result = await User.destroy({ where: { id: req.params.id } });
+      if (!result) throw { code: 404, message: 'user not found' };
+
+      res.sendStatus(204);
+    } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
           status: 'error',
-          message: 'user not found',
+          message: error.message,
         });
         return;
       }
-      res.sendStatus(204);
-    } catch (error) {
       res.status(500).json({
         status: 'error',
         message: error,

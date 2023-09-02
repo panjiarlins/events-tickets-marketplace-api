@@ -3,7 +3,7 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Event extends Model {
+  class Order extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,7 +11,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.Event.belongsTo(models.User, {
+      models.Order.hasOne(models.Review, {
+        foreignKey: {
+          name: 'orderId',
+          primaryKey: true,
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      models.Order.belongsTo(models.User, {
         foreignKey: {
           name: 'userId',
           allowNull: false,
@@ -19,16 +27,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
-      models.Event.belongsToMany(models.Voucher, {
-        through: models.EventVoucher,
-        foreignKey: {
-          name: 'eventId',
-          primaryKey: true,
-        },
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-      });
-      models.Event.hasMany(models.Order, {
+      models.Order.belongsTo(models.Event, {
         foreignKey: {
           name: 'eventId',
           allowNull: false,
@@ -36,44 +35,34 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
+      models.Order.belongsTo(models.Voucher, {
+        foreignKey: {
+          name: 'voucherCode',
+          allowNull: true,
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
     }
   }
-  Event.init({
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    imageUrl: {
-      type: DataTypes.TEXT('long'),
-      allowNull: false,
-    },
-    city: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    address: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.TEXT('long'),
-      allowNull: false,
-    },
-    price: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    stock: {
+  Order.init({
+    quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    startAt: {
-      type: DataTypes.DATE,
+    referralPointUsage: {
+      type: DataTypes.FLOAT,
       allowNull: false,
+      defaultValue: 0,
+    },
+    isPaid: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
   }, {
     sequelize,
-    modelName: 'Event',
+    modelName: 'Order',
   });
-  return Event;
+  return Order;
 };

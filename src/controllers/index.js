@@ -1,5 +1,7 @@
 module.exports = {
   userController: require('./user.controller'),
-  reviewController: require('./review.controller'),
+  eventController: require('./event.controller'),
   voucherController: require('./voucher.controller'),
+  orderController: require('./order.controller'),
+  reviewController: require('./review.controller'),
 };

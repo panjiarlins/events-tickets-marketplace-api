@@ -13,6 +13,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      models.Review.belongsTo(models.Order, {
+        foreignKey: {
+          name: 'orderId',
+          primaryKey: true,
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
     }
   }
   Review.init({
@@ -28,5 +36,8 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Review',
   });
+
+  Review.removeAttribute('id');
+
   return Review;
 };
