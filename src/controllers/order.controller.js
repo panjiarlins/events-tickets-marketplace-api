@@ -1,3 +1,7 @@
+const fs = require('fs');
+const path = require('path');
+const mustache = require('mustache');
+const mailer = require('../lib/nodemailer');
 const {
   Sequelize, sequelize, Order, User, Event, Review, Voucher,
 } = require('../models');
@@ -141,6 +145,63 @@ const orderController = {
       res.status(200).json({
         status: 'success',
         data: orderData,
+      });
+    } catch (error) {
+      if (error.code && error.message) {
+        res.status(error.code).json({
+          status: 'error',
+          message: error.message,
+        });
+        return;
+      }
+      res.status(500).json({
+        status: 'error',
+        message: error,
+      });
+    }
+  },
+
+  sendPaymentEmail: async (req, res) => {
+    try {
+      const orderData = await Order.findByPk(req.params.id, {
+        include: [
+          {
+            model: User,
+            attributes: ['firstName', 'email'],
+          },
+          { model: Event },
+          { model: Voucher },
+        ],
+      });
+      if (!orderData) throw { code: 404, message: 'order not found' };
+      if (orderData.isPaid) throw { code: 400, message: 'order already paid' };
+
+      const totalPayment = orderData.Event.price
+        * orderData.quantity
+        - orderData.referralPointUsage
+        - (orderData.Voucher?.point || 0);
+
+      const template = fs
+        .readFileSync(path.resolve(__dirname, '..', 'templates', 'paymentEmail.html'))
+        .toString();
+
+      const rendered = mustache.render(template, {
+        firstName: orderData.User.firstName,
+        totalPayment: totalPayment.toLocaleString('id-ID'),
+        paymentLink: `${process.env.WEBSITE}/pay/${orderData.id}`,
+      });
+
+      mailer({
+        to: process.env.NODEMAILER_EMAIL,
+        // to: orderData.User.email,
+        html: rendered,
+        text: rendered,
+        subject: 'Payment Gateway Notification',
+      });
+
+      res.status(200).json({
+        status: 'success',
+        message: 'payment email has been sent',
       });
     } catch (error) {
       if (error.code && error.message) {
