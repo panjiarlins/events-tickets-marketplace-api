@@ -1,5 +1,6 @@
 const { isEmpty, size } = require('lodash');
 const router = require('express').Router();
+const { userValidator } = require('../middlewares/validators');
 const { userController } = require('../controllers');
 
 router.get('/', async (req, res) => {
@@ -24,7 +25,7 @@ router.get('/', async (req, res) => {
   }
 });
 router.get('/:id', userController.getUserById);
-router.post('/', userController.registerUser);
+router.post('/', userValidator.registerUser, userController.registerUser);
 router.delete('/:id', userController.deleteUserById);
 
 module.exports = router;

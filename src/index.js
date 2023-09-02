@@ -2,7 +2,7 @@ require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
 const routers = require('./routes/index');
-const db = require('./models');
+// const db = require('./models');
 
 const PORT = process.env.PORT || 2500;
 
@@ -17,5 +17,5 @@ app.use('/reviews', routers.reviewRouter);
 
 app.listen(PORT, () => {
   console.log(`Server started on port:${PORT}`);
-  db.sequelize.sync({ alter: true });
+  // db.sequelize.sync({ alter: true });
 });
