@@ -64,18 +64,23 @@ const userController = {
 
   loginUser: async (req, res) => {
     try {
-      const { email, password } = req.query;
+      const { email, password } = req.body;
+
+      // check user email
       const result = await User.findOne({
         attributes: ['id', 'firstName', 'lastName', 'email', 'password'],
         where: { email },
         raw: true,
       });
+
+      // check user password
       const isValid = await bcrypt.compare(password, result.password);
       if (!isValid) throw { code: 401, message: 'wrong email/password' };
 
+      // generate token
       delete result.password;
       const token = jwtController.generateToken(result);
-      console.log('test', result);
+
       res.status(200).json({
         status: 'success',
         data: { token },
