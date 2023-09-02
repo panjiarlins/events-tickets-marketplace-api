@@ -66,16 +66,19 @@ const userController = {
     try {
       const { email, password } = req.body;
 
+      console.log(req.body);
+
       // check user email
       const result = await User.findOne({
         attributes: ['id', 'firstName', 'lastName', 'email', 'password'],
         where: { email },
         raw: true,
       });
+      if (!result) throw { code: 401, message: 'wrong email' };
 
       // check user password
       const isValid = await bcrypt.compare(password, result.password);
-      if (!isValid) throw { code: 401, message: 'wrong email/password' };
+      if (!isValid) throw { code: 401, message: 'wrong password' };
 
       // generate token
       delete result.password;
