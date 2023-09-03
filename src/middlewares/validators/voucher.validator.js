@@ -23,6 +23,7 @@ const voucherValidator = {
   createVoucher: (req, res, next) => {
     try {
       const schema = Joi.object({
+        eventId: Joi.number().integer().min(1).required(),
         code: Joi.string().required(),
         point: Joi.number().min(1).required(),
         stock: Joi.number().integer().min(1).required(),
