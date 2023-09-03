@@ -1,0 +1,103 @@
+const Joi = require('joi');
+const { ResponseError } = require('../../errors');
+
+const eventValidator = {
+  getByEventId: (req, res, next) => {
+    try {
+      const schema = Joi.object({
+        id: Joi.number().integer().min(1).required(),
+      }).required();
+
+      const result = schema.validate(req.params);
+      if (result.error) throw new ResponseError(result.error.message, 400);
+
+      next();
+    } catch (error) {
+      res.status(error.statusCode || 500).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
+  },
+
+  createEvent: (req, res, next) => {
+    try {
+      const schema = Joi.object({
+        title: Joi.string().required(),
+        userId: Joi.string().guid().required(),
+        imageUrl: Joi.string().required(),
+        city: Joi.string().required(),
+        address: Joi.string().required(),
+        description: Joi.string().required(),
+        price: Joi.number().min(1).required(),
+        stock: Joi.number().integer().min(1).required(),
+        startAt: Joi.date().timestamp().required(),
+      });
+
+      const result = schema.validate(req.body);
+      if (result.error) throw new ResponseError(result.error.message, 400);
+
+      next();
+    } catch (error) {
+      res.status(error.statusCode || 500).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
+  },
+
+  deleteEventById: (req, res, next) => {
+    try {
+      const schema = Joi.object({
+        id: Joi.number().integer().min(1).required(),
+      }).required();
+
+      const result = schema.validate(req.params);
+      if (result.error) throw new ResponseError(result.error.message, 400);
+
+      next();
+    } catch (error) {
+      res.status(error.statusCode || 500).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
+  },
+
+  editEvent: (req, res, next) => {
+    try {
+      const schemaParams = Joi.object({
+        id: Joi.number().integer().min(1).required(),
+      }).required();
+
+      const resultParams = schemaParams.validate(req.params);
+      if (resultParams.error)
+        throw new ResponseError(resultParams.error.message, 400);
+
+      const schemaBody = Joi.object({
+        title: Joi.string().optional(),
+        imageUrl: Joi.string().optional(),
+        userId: Joi.string().guid().optional(),
+        city: Joi.string().optional(),
+        address: Joi.string().optional(),
+        description: Joi.string().optional(),
+        price: Joi.number().min(1).optional(),
+        stock: Joi.number().min(1).optional(),
+        startAt: Joi.date().timestamp().optional,
+      }).required();
+
+      const resultBody = schemaBody.validate(req.body);
+      if (resultBody.error)
+        throw new ResponseError(resultBody.error.message, 400);
+
+      next();
+    } catch (error) {
+      res.status(error.statusCode || 500).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
+  },
+};
+
+module.exports = eventValidator;
