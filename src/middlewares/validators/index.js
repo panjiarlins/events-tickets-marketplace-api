@@ -3,4 +3,5 @@ module.exports = {
   eventValidator: require('./event.validator'),
   voucherValidator: require('./voucher.validator'),
   orderValidator: require('./order.validator'),
+  reviewValidator: require('./review.validator'),
 };
