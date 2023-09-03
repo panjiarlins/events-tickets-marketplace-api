@@ -35,6 +35,23 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
+      models.User.hasMany(models.ReferralAction, {
+        foreignKey: {
+          name: 'referrerUserId',
+          primaryKey: true,
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      models.User.hasOne(models.ReferralAction, {
+        foreignKey: {
+          name: 'referredUserId',
+          primaryKey: true,
+          unique: true,
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
     }
   }
 
