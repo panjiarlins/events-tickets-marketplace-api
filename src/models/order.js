@@ -45,24 +45,29 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Order.init({
-    quantity: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+
+  Order.init(
+    {
+      quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      referralPointUsage: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      isPaid: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
     },
-    referralPointUsage: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-      defaultValue: 0,
+    {
+      sequelize,
+      modelName: 'Order',
     },
-    isPaid: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-  }, {
-    sequelize,
-    modelName: 'Order',
-  });
+  );
+
   return Order;
 };

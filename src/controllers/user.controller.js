@@ -1,7 +1,13 @@
 const bcrypt = require('bcrypt');
-const jwtController = require('./jwt.controller');
+const jwt = require('jsonwebtoken');
+const { ResponseError } = require('../errors');
 const {
-  sequelize, User, Referral, Event, Voucher,
+  Sequelize,
+  sequelize,
+  User,
+  Referral,
+  Event,
+  Voucher,
 } = require('../models');
 
 const userController = {
@@ -17,14 +23,15 @@ const userController = {
           },
         ],
       });
+
       res.status(200).json({
         status: 'success',
         data: result,
       });
     } catch (error) {
-      res.status(500).json({
+      res.status(error.statusCode || 500).json({
         status: 'error',
-        message: error,
+        message: error.message,
       });
     }
   },
@@ -41,23 +48,16 @@ const userController = {
           },
         ],
       });
-      if (!result) throw { code: 404, message: 'user not found' };
+      if (!result) throw new ResponseError('user not found', 404);
 
       res.status(200).json({
         status: 'success',
         data: result,
       });
     } catch (error) {
-      if (error.code && error.message) {
-        res.status(error.code).json({
-          status: 'error',
-          message: error.message,
-        });
-        return;
-      }
-      res.status(500).json({
+      res.status(error.statusCode || 500).json({
         status: 'error',
-        message: error,
+        message: error.message,
       });
     }
   },
@@ -66,83 +66,76 @@ const userController = {
     try {
       const { email, password } = req.body;
 
-      console.log(req.body);
-
       // check user email
       const result = await User.findOne({
         attributes: ['id', 'firstName', 'lastName', 'email', 'password'],
         where: { email },
         raw: true,
       });
-      if (!result) throw { code: 401, message: 'wrong email' };
+      if (!result) throw new ResponseError('wrong email', 401);
 
       // check user password
       const isValid = await bcrypt.compare(password, result.password);
-      if (!isValid) throw { code: 401, message: 'wrong password' };
+      if (!isValid) throw new ResponseError('wrong password', 401);
 
       // generate token
       delete result.password;
-      const token = jwtController.generateToken(result);
+      const token = jwt.sign(result, process.env.JWT_SECRET_KEY, {
+        expiresIn: '1h',
+      });
 
       res.status(200).json({
         status: 'success',
         data: { token },
       });
     } catch (error) {
-      if (error.code && error.message) {
-        res.status(error.code).json({
-          status: 'error',
-          message: error.message,
-        });
-        return;
-      }
-      res.status(500).json({
+      res.status(error.statusCode || 500).json({
         status: 'error',
-        message: error,
+        message: error.message,
       });
     }
   },
 
   registerUser: async (req, res) => {
     try {
-      await sequelize.transaction(async (t) => {
-        const salt = await bcrypt.genSalt(10);
-        const [userData, isCreated] = await User.findOrCreate({
-          where: { email: req.body.email },
-          defaults: {
-            ...req.body,
-            password: await bcrypt.hash(req.body.password, salt),
-          },
-          transaction: t,
-        });
-        if (!isCreated) throw { code: 400, message: 'email already exist' };
+      await sequelize.transaction(
+        {
+          isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.SERIALIZABLE,
+        },
+        async (t) => {
+          const salt = await bcrypt.genSalt(10);
+          const [userData, isCreated] = await User.findOrCreate({
+            where: { email: req.body.email },
+            defaults: {
+              ...req.body,
+              password: await bcrypt.hash(req.body.password, salt),
+            },
+            transaction: t,
+          });
+          if (!isCreated) throw new ResponseError('email already exist', 400);
 
-        const {
-          id, firstName, lastName, email,
-        } = userData;
-        const { code } = await userData.createReferral(
-          { code: `REF-${email}` },
-          { transaction: t },
-        );
+          const { id, firstName, lastName, email } = userData;
+          const { code } = await userData.createReferral(
+            { code: `REF-${email}` },
+            { transaction: t },
+          );
 
-        res.status(201).json({
-          status: 'success',
-          data: {
-            id, firstName, lastName, email, code,
-          },
-        });
-      });
+          res.status(201).json({
+            status: 'success',
+            data: {
+              id,
+              firstName,
+              lastName,
+              email,
+              code,
+            },
+          });
+        },
+      );
     } catch (error) {
-      if (error.code && error.message) {
-        res.status(error.code).json({
-          status: 'error',
-          message: error.message,
-        });
-        return;
-      }
-      res.status(500).json({
+      res.status(error.statusCode || 500).json({
         status: 'error',
-        message: error,
+        message: error.message,
       });
     }
   },
@@ -150,20 +143,13 @@ const userController = {
   deleteUserById: async (req, res) => {
     try {
       const result = await User.destroy({ where: { id: req.params.id } });
-      if (!result) throw { code: 404, message: 'user not found' };
+      if (!result) throw new ResponseError('user not found', 404);
 
       res.sendStatus(204);
     } catch (error) {
-      if (error.code && error.message) {
-        res.status(error.code).json({
-          status: 'error',
-          message: error.message,
-        });
-        return;
-      }
-      res.status(500).json({
+      res.status(error.statusCode || 500).json({
         status: 'error',
-        message: error,
+        message: error.message,
       });
     }
   },

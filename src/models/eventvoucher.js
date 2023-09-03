@@ -13,9 +13,14 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  EventVoucher.init({}, {
-    sequelize,
-    modelName: 'EventVoucher',
-  });
+
+  EventVoucher.init(
+    {},
+    {
+      sequelize,
+      modelName: 'EventVoucher',
+    },
+  );
+
   return EventVoucher;
 };

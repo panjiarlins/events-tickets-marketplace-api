@@ -1,8 +1,6 @@
 'use strict';
 
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Review extends Model {
@@ -23,19 +21,23 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Review.init({
-    comment: {
-      type: DataTypes.TEXT,
-      allowNull: false,
+
+  Review.init(
+    {
+      comment: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      rating: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+      },
     },
-    rating: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
+    {
+      sequelize,
+      modelName: 'Review',
     },
-  }, {
-    sequelize,
-    modelName: 'Review',
-  });
+  );
 
   Review.removeAttribute('id');
 

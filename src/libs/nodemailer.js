@@ -9,12 +9,14 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
 });
 
-const mailer = async ({
-  subject, html, to, text,
-}) => {
+const mailer = async ({ subject, html, to, text }) => {
   const info = await transporter.sendMail({
-    subject, html, to, text,
+    subject,
+    html,
+    to,
+    text,
   });
+
   console.log('Message sent: ', info);
 };
 

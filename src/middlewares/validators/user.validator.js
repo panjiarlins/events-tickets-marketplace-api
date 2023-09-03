@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { ResponseError } = require('../../errors');
 
 const userValidator = {
   getUserById: (req, res, next) => {
@@ -8,20 +9,13 @@ const userValidator = {
       }).required();
 
       const result = schema.validate(req.params);
-      if (result.error) throw { code: 400, message: result.error.message };
+      if (result.error) throw new ResponseError(result.error.message, 400);
 
       next();
     } catch (error) {
-      if (error.code && error.message) {
-        res.status(error.code).json({
-          status: 'error',
-          message: error.message,
-        });
-        return;
-      }
-      res.status(500).json({
+      res.status(error.statusCode || 500).json({
         status: 'error',
-        message: error,
+        message: error.message,
       });
     }
   },
@@ -34,20 +28,13 @@ const userValidator = {
       }).required();
 
       const result = schema.validate(req.body);
-      if (result.error) throw { code: 400, message: result.error.message };
+      if (result.error) throw new ResponseError(result.error.message, 400);
 
       next();
     } catch (error) {
-      if (error.code && error.message) {
-        res.status(error.code).json({
-          status: 'error',
-          message: error.message,
-        });
-        return;
-      }
-      res.status(500).json({
+      res.status(error.statusCode || 500).json({
         status: 'error',
-        message: error,
+        message: error.message,
       });
     }
   },
@@ -63,20 +50,13 @@ const userValidator = {
       }).required();
 
       const result = schema.validate(req.body);
-      if (result.error) throw { code: 400, message: result.error.message };
+      if (result.error) throw new ResponseError(result.error.message, 400);
 
       next();
     } catch (error) {
-      if (error.code && error.message) {
-        res.status(error.code).json({
-          status: 'error',
-          message: error.message,
-        });
-        return;
-      }
-      res.status(500).json({
+      res.status(error.statusCode || 500).json({
         status: 'error',
-        message: error,
+        message: error.message,
       });
     }
   },
@@ -88,20 +68,13 @@ const userValidator = {
       }).required();
 
       const result = schema.validate(req.params);
-      if (result.error) throw { code: 400, message: result.error.message };
+      if (result.error) throw new ResponseError(result.error.message, 400);
 
       next();
     } catch (error) {
-      if (error.code && error.message) {
-        res.status(error.code).json({
-          status: 'error',
-          message: error.message,
-        });
-        return;
-      }
-      res.status(500).json({
+      res.status(error.statusCode || 500).json({
         status: 'error',
-        message: error,
+        message: error.message,
       });
     }
   },

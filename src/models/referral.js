@@ -21,21 +21,25 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Referral.init({
-    code: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: 'code',
+
+  Referral.init(
+    {
+      code: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: 'code',
+      },
+      point: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        defaultValue: 0,
+      },
     },
-    point: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-      defaultValue: 0,
+    {
+      sequelize,
+      modelName: 'Referral',
     },
-  }, {
-    sequelize,
-    modelName: 'Referral',
-  });
+  );
 
   Referral.removeAttribute('id');
 
