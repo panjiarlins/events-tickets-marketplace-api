@@ -38,42 +38,47 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Event.init({
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false,
+
+  Event.init(
+    {
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      imageUrl: {
+        type: DataTypes.TEXT('long'),
+        allowNull: false,
+      },
+      city: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      address: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      description: {
+        type: DataTypes.TEXT('long'),
+        allowNull: false,
+      },
+      price: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+      },
+      stock: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      startAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
     },
-    imageUrl: {
-      type: DataTypes.TEXT('long'),
-      allowNull: false,
+    {
+      sequelize,
+      modelName: 'Event',
     },
-    city: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    address: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.TEXT('long'),
-      allowNull: false,
-    },
-    price: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    stock: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    startAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-  }, {
-    sequelize,
-    modelName: 'Event',
-  });
+  );
+
   return Event;
 };

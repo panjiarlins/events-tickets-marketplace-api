@@ -30,22 +30,27 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Voucher.init({
-    code: {
-      type: DataTypes.STRING,
-      primaryKey: true,
+
+  Voucher.init(
+    {
+      code: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+      },
+      point: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+      },
+      stock: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
     },
-    point: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
+    {
+      sequelize,
+      modelName: 'Voucher',
     },
-    stock: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-  }, {
-    sequelize,
-    modelName: 'Voucher',
-  });
+  );
+
   return Voucher;
 };

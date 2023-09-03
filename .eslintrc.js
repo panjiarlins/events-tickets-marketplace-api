@@ -4,14 +4,11 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: 'airbnb-base',
+  extends: ['airbnb-base', 'prettier'],
+  plugins: ['prettier'],
   overrides: [
     {
-      files: [
-        'src/migrations/*',
-        'src/models/*',
-        'src/seeders/*',
-      ],
+      files: ['src/migrations/*', 'src/models/*', 'src/seeders/*'],
       rules: {
         strict: 'off',
         'no-unused-vars': 'off',
@@ -23,7 +20,14 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   rules: {
-    'linebreak-style': 'off',
+    'prettier/prettier': [
+      'error',
+      {
+        singleQuote: true,
+        endOfLine: 'auto',
+        semi: true,
+      },
+    ],
     'no-console': 'off',
     'import/no-extraneous-dependencies': 'off',
     'import/extensions': 'off',
