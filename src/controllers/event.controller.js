@@ -20,6 +20,30 @@ const eventController = {
     }
   },
 
+  getEventByCity: async (req, res) => {
+    try {
+      const { city } = req.query;
+      const result = await Event.findAll({
+        where: {
+          city,
+        },
+      });
+      if (!result || result.length === 0) {
+        throw new ResponseError('event not found', 404);
+      }
+
+      res.status(200).json({
+        status: 'success',
+        data: result,
+      });
+    } catch (error) {
+      res.status(error.statusCode || 500).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
+  },
+
   getEventById: async (req, res) => {
     try {
       const result = await Event.findByPk(req.params.id, {
