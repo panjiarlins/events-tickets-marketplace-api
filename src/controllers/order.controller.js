@@ -144,7 +144,7 @@ const orderController = {
     try {
       const [orderData] = await Order.update(
         { isPaid: true },
-        { where: { id: req.params.id } },
+        { where: { id: req.body.id } },
       );
       if (orderData === 0) throw new ResponseError('order not found', 404);
 
@@ -162,7 +162,7 @@ const orderController = {
 
   sendPaymentEmail: async (req, res) => {
     try {
-      const orderData = await Order.findByPk(req.params.id, {
+      const orderData = await Order.findByPk(req.body.id, {
         include: [
           {
             model: User,

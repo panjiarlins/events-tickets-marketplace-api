@@ -2,7 +2,8 @@ require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
 const routers = require('./routes/index');
-// const db = require('./models');
+// eslint-disable-next-line no-unused-vars
+const db = require('./models');
 
 const PORT = process.env.PORT || 2500;
 
