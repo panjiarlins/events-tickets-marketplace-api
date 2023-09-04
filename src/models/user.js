@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: {
           name: 'referredUserId',
           primaryKey: true,
-          unique: true,
+          unique: 'referredUserId',
         },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',

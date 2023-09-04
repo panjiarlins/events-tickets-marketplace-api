@@ -6,6 +6,7 @@ const {
   sequelize,
   User,
   Referral,
+  ReferralAction,
   Event,
   Voucher,
 } = require('../models');
@@ -103,6 +104,7 @@ const userController = {
           isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.SERIALIZABLE,
         },
         async (t) => {
+          // create user
           const salt = await bcrypt.genSalt(10);
           const [userData, isCreated] = await User.findOrCreate({
             where: { email: req.body.email },
@@ -115,10 +117,41 @@ const userController = {
           if (!isCreated) throw new ResponseError('email already exist', 400);
 
           const { id, firstName, lastName, email } = userData;
-          const { code } = await userData.createReferral(
+
+          // create referral code
+          const referredUserData = await userData.createReferral(
             { code: `REF-${email}` },
             { transaction: t },
           );
+
+          if (req.body.referrerCode) {
+            // check referralCode
+            const referrerUserData = await Referral.findOne({
+              where: { code: req.body.referrerCode },
+              transaction: t,
+            });
+            if (!referrerUserData)
+              throw new ResponseError('referralCode not found', 404);
+
+            // increase referral point
+            await referrerUserData.increment(
+              { point: 50000 },
+              { transaction: t },
+            );
+            await referredUserData.increment(
+              { point: 50000 },
+              { transaction: t },
+            );
+
+            // create referral action
+            await ReferralAction.create(
+              {
+                referrerUserId: referrerUserData.userId,
+                referredUserId: referredUserData.userId,
+              },
+              { transaction: t },
+            );
+          }
 
           res.status(201).json({
             status: 'success',
@@ -127,7 +160,7 @@ const userController = {
               firstName,
               lastName,
               email,
-              code,
+              code: referredUserData.code,
             },
           });
         },

@@ -1,6 +1,6 @@
 'use strict';
 
-const { Model, INTEGER } = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class ReferralAction extends Model {
@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: {
           name: 'referredUserId',
           primaryKey: true,
-          unique: true,
+          unique: 'referredUserId',
         },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
