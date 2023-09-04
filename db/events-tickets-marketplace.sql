@@ -4,6 +4,7 @@ CREATE TABLE `Users` (
   `lastName` varchar(255) NOT NULL,
   `email` varchar(255) UNIQUE NOT NULL,
   `password` varchar(255) NOT NULL,
+  `profileImage` longblob,
   `createdAt` timestamp NOT NULL,
   `updatedAt` timestamp NOT NULL
 );
@@ -28,7 +29,7 @@ CREATE TABLE `Events` (
   `id` integer PRIMARY KEY,
   `userId` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
-  `imageUrl` text NOT NULL,
+  `imageName` varchar(255) NOT NULL,
   `city` varchar(255) NOT NULL,
   `address` text NOT NULL,
   `description` text NOT NULL,
