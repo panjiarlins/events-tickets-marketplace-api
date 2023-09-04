@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: {
           name: 'referredUserId',
           primaryKey: true,
-          unique: true,
+          unique: 'referredUserId',
         },
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
@@ -78,6 +78,10 @@ module.exports = (sequelize, DataTypes) => {
       password: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      profileImage: {
+        type: DataTypes.BLOB('long'),
+        allowNull: true,
       },
     },
     {
