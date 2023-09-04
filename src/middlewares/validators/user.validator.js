@@ -41,7 +41,8 @@ const userValidator = {
 
   registerUser: (req, res, next) => {
     try {
-      const schema = Joi.object({
+      // validate req.body
+      const schemaBody = Joi.object({
         firstName: Joi.string().required(),
         lastName: Joi.string().required(),
         email: Joi.string().email().required(),
@@ -49,7 +50,33 @@ const userValidator = {
         referrerCode: Joi.string().optional(),
       }).required();
 
-      const result = schema.validate(req.body);
+      const resultBody = schemaBody.validate(req.body);
+      if (resultBody.error)
+        throw new ResponseError(resultBody.error.message, 400);
+
+      // validate req.file
+      const schemaFile = Joi.optional().label('profileImage');
+
+      const resultFile = schemaFile.validate(req.file);
+      if (resultFile.error)
+        throw new ResponseError(resultFile.error.message, 400);
+
+      next();
+    } catch (error) {
+      res.status(error.statusCode || 500).json({
+        status: 'error',
+        message: error.message,
+      });
+    }
+  },
+
+  getUserProfileImageByUserId: (req, res, next) => {
+    try {
+      const schema = Joi.object({
+        id: Joi.string().guid().required(),
+      }).required();
+
+      const result = schema.validate(req.params);
       if (result.error) throw new ResponseError(result.error.message, 400);
 
       next();

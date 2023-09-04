@@ -79,6 +79,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      profileImage: {
+        type: DataTypes.BLOB('long'),
+        allowNull: true,
+      },
     },
     {
       sequelize,
