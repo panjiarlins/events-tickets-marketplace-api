@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { userValidator } = require('../middlewares/validators');
 const { userController } = require('../controllers');
-const { userMulter, errorHandlingMulter } = require('../middlewares/multers');
+const { userMulter, multerErrorHandler } = require('../middlewares/multers');
 
 router.get('/', userController.getAllUsers);
 
@@ -16,7 +16,7 @@ router.get(
 router.post(
   '/',
   userMulter.profileImageUploader().single('profileImage'),
-  errorHandlingMulter,
+  multerErrorHandler,
   userValidator.registerUser,
   userController.registerUser,
 );
