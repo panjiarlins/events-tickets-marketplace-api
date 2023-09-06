@@ -13,9 +13,9 @@ const eventController = {
         data: result,
       });
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -37,9 +37,9 @@ const eventController = {
         data: result,
       });
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -56,9 +56,9 @@ const eventController = {
         data: result,
       });
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -75,9 +75,9 @@ const eventController = {
         data: result,
       });
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -104,14 +104,14 @@ const eventController = {
             ],
             transaction: t,
           });
-        },
+        }
       );
 
       next();
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -123,9 +123,9 @@ const eventController = {
 
       res.sendStatus(204);
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },

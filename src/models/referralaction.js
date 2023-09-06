@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: 'ReferralAction',
-    },
+    }
   );
 
   ReferralAction.removeAttribute('id');

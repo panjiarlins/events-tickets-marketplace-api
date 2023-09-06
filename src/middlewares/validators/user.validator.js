@@ -9,13 +9,14 @@ const userValidator = {
       }).required();
 
       const result = schema.validate(req.params);
-      if (result.error) throw new ResponseError(result.error.message, 400);
+      if (result.error)
+        throw new ResponseError(result.error?.message || result.error, 400);
 
       next();
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -28,13 +29,14 @@ const userValidator = {
       }).required();
 
       const result = schema.validate(req.body);
-      if (result.error) throw new ResponseError(result.error.message, 400);
+      if (result.error)
+        throw new ResponseError(result.error?.message || result.error, 400);
 
       next();
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -52,20 +54,26 @@ const userValidator = {
 
       const resultBody = schemaBody.validate(req.body);
       if (resultBody.error)
-        throw new ResponseError(resultBody.error.message, 400);
+        throw new ResponseError(
+          resultBody.error?.message || resultBody.error,
+          400
+        );
 
       // validate req.file
       const schemaFile = Joi.optional().label('profileImage');
 
       const resultFile = schemaFile.validate(req.file);
       if (resultFile.error)
-        throw new ResponseError(resultFile.error.message, 400);
+        throw new ResponseError(
+          resultFile.error?.message || resultFile.error,
+          400
+        );
 
       next();
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -77,13 +85,14 @@ const userValidator = {
       }).required();
 
       const result = schema.validate(req.params);
-      if (result.error) throw new ResponseError(result.error.message, 400);
+      if (result.error)
+        throw new ResponseError(result.error?.message || result.error, 400);
 
       next();
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -95,13 +104,14 @@ const userValidator = {
       }).required();
 
       const result = schema.validate(req.params);
-      if (result.error) throw new ResponseError(result.error.message, 400);
+      if (result.error)
+        throw new ResponseError(result.error?.message || result.error, 400);
 
       next();
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },

@@ -25,9 +25,9 @@ const orderController = {
         data: result,
       });
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -44,9 +44,9 @@ const orderController = {
         data: result,
       });
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -101,7 +101,7 @@ const orderController = {
             referralPointUsage = Math.min(totalPayment, referralData.point);
             await referralData.increment(
               { point: -referralPointUsage },
-              { transaction: t },
+              { transaction: t }
             );
           }
 
@@ -120,7 +120,7 @@ const orderController = {
                 'referralPointUsage',
               ],
               transaction: t,
-            },
+            }
           );
 
           res.status(201).json({
@@ -130,12 +130,12 @@ const orderController = {
               totalPayment,
             },
           });
-        },
+        }
       );
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -144,7 +144,7 @@ const orderController = {
     try {
       const [orderData] = await Order.update(
         { isPaid: true },
-        { where: { id: req.body.id } },
+        { where: { id: req.body.id } }
       );
       if (orderData === 0) throw new ResponseError('order not found', 404);
 
@@ -153,9 +153,9 @@ const orderController = {
         data: orderData,
       });
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -182,7 +182,7 @@ const orderController = {
 
       const template = fs
         .readFileSync(
-          path.resolve(__dirname, '..', 'templates', 'paymentEmail.html'),
+          path.resolve(__dirname, '..', 'templates', 'paymentEmail.html')
         )
         .toString();
 
@@ -205,9 +205,9 @@ const orderController = {
         message: 'payment email has been sent',
       });
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },

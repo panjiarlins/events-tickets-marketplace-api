@@ -9,13 +9,14 @@ const reviewValidator = {
       }).required();
 
       const result = schema.validate(req.params);
-      if (result.error) throw new ResponseError(result.error.message, 400);
+      if (result.error)
+        throw new ResponseError(result.error?.message || result.error, 400);
 
       next();
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -29,13 +30,14 @@ const reviewValidator = {
       }).required();
 
       const result = schema.validate(req.body);
-      if (result.error) throw new ResponseError(result.error.message, 400);
+      if (result.error)
+        throw new ResponseError(result.error?.message || result.error, 400);
 
       next();
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -47,13 +49,14 @@ const reviewValidator = {
       }).required();
 
       const result = schema.validate(req.params);
-      if (result.error) throw new ResponseError(result.error.message, 400);
+      if (result.error)
+        throw new ResponseError(result.error?.message || result.error, 400);
 
       next();
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
