@@ -45,8 +45,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      imageUrl: {
-        type: DataTypes.TEXT('long'),
+      imageName: {
+        type: DataTypes.STRING,
         allowNull: false,
       },
       city: {
