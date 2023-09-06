@@ -20,18 +20,14 @@ const eventController = {
     }
   },
 
-  getEventByCity: async (req, res) => {
+  getEventsByCity: async (req, res) => {
     try {
       const { city } = req.query;
       const result = await Event.findAll({
         where: {
-          city,
+          [Sequelize.Op.like]: `${city}`,
         },
       });
-      if (!result || result.length === 0) {
-        throw new ResponseError('event not found', 404);
-      }
-
       res.status(200).json({
         status: 'success',
         data: result,
