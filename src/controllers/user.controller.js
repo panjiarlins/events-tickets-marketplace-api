@@ -31,9 +31,9 @@ const userController = {
         data: result,
       });
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -57,9 +57,9 @@ const userController = {
         data: result,
       });
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -91,9 +91,9 @@ const userController = {
         data: { token },
       });
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -173,9 +173,9 @@ const userController = {
         },
       );
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -188,9 +188,9 @@ const userController = {
 
       res.set('Content-type', 'image/png').send(userData.profileImage);
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
@@ -202,9 +202,9 @@ const userController = {
 
       res.sendStatus(204);
     } catch (error) {
-      res.status(error.statusCode || 500).json({
+      res.status(error?.statusCode || 500).json({
         status: 'error',
-        message: error.message,
+        message: error?.message || error,
       });
     }
   },
