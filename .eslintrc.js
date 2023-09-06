@@ -26,6 +26,7 @@ module.exports = {
         singleQuote: true,
         endOfLine: 'auto',
         semi: true,
+        trailingComma: 'es5',
       },
     ],
     'no-console': 'off',

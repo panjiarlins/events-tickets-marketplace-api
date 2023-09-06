@@ -77,7 +77,7 @@ const eventValidator = {
       if (resultParams.error)
         throw new ResponseError(
           resultParams.error?.message || resultParams.error,
-          400,
+          400
         );
 
       const schemaBody = Joi.object({
@@ -96,7 +96,7 @@ const eventValidator = {
       if (resultBody.error)
         throw new ResponseError(
           resultBody.error?.message || resultBody.error,
-          400,
+          400
         );
 
       next();

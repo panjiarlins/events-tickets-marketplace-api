@@ -56,7 +56,7 @@ const userValidator = {
       if (resultBody.error)
         throw new ResponseError(
           resultBody.error?.message || resultBody.error,
-          400,
+          400
         );
 
       // validate req.file
@@ -66,7 +66,7 @@ const userValidator = {
       if (resultFile.error)
         throw new ResponseError(
           resultFile.error?.message || resultFile.error,
-          400,
+          400
         );
 
       next();

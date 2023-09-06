@@ -127,7 +127,7 @@ const userController = {
           // create referral code
           const referredUserData = await userData.createReferral(
             { code: `REF-${userData.email}` },
-            { transaction: t },
+            { transaction: t }
           );
 
           if (req.body.referrerCode) {
@@ -142,11 +142,11 @@ const userController = {
             // increase referral point
             await referrerUserData.increment(
               { point: 50000 },
-              { transaction: t },
+              { transaction: t }
             );
             await referredUserData.increment(
               { point: 50000 },
-              { transaction: t },
+              { transaction: t }
             );
 
             // create referral action
@@ -155,7 +155,7 @@ const userController = {
                 referrerUserId: referrerUserData.userId,
                 referredUserId: referredUserData.userId,
               },
-              { transaction: t },
+              { transaction: t }
             );
           }
 
@@ -170,7 +170,7 @@ const userController = {
             status: 'success',
             data: result,
           });
-        },
+        }
       );
     } catch (error) {
       res.status(error?.statusCode || 500).json({

@@ -8,7 +8,7 @@ router.post('/', orderValidator.createOrder, orderController.createOrder);
 router.post(
   '/payment-email',
   orderValidator.sendPaymentEmail,
-  orderController.sendPaymentEmail,
+  orderController.sendPaymentEmail
 );
 router.patch('/pay', orderValidator.payOrder, orderController.payOrder);
 

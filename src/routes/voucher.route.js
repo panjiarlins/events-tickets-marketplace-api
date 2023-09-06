@@ -6,12 +6,12 @@ router.get('/', voucherController.getAllVouchers);
 router.get(
   '/:eventId',
   voucherValidator.getAllVouchersByEventId,
-  voucherController.getAllVouchersByEventId,
+  voucherController.getAllVouchersByEventId
 );
 router.post(
   '/',
   voucherValidator.createVoucher,
-  voucherController.createVoucher,
+  voucherController.createVoucher
 );
 
 module.exports = router;

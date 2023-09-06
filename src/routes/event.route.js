@@ -9,13 +9,13 @@ router.post('/', eventValidator.createEvent, eventController.createEvent);
 router.delete(
   '/:id',
   eventValidator.deleteEventById,
-  eventController.deleteEventById,
+  eventController.deleteEventById
 );
 router.patch(
   '/:id',
   eventValidator.editEvent,
   eventController.editEvent,
-  eventController.getEventById,
+  eventController.getEventById
 );
 
 module.exports = router;

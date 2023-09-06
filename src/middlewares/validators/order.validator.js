@@ -69,7 +69,6 @@ const orderValidator = {
       }).required();
 
       const result = schema.validate(req.body);
-      console.log(result);
       if (result.error)
         throw new ResponseError(result.error?.message || result.error, 400);
 

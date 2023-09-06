@@ -65,7 +65,7 @@ const voucherController = {
             status: 'success',
             data: voucherData,
           });
-        },
+        }
       );
     } catch (error) {
       res.status(error?.statusCode || 500).json({

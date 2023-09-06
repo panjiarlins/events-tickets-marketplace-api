@@ -104,7 +104,7 @@ const eventController = {
             ],
             transaction: t,
           });
-        },
+        }
       );
 
       next();
