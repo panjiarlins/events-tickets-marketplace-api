@@ -25,7 +25,9 @@ const eventController = {
       const { city } = req.query;
       const result = await Event.findAll({
         where: {
-          [Sequelize.Op.like]: `${city}`,
+          city: {
+            [Sequelize.Op.like]: `%${city}%`,
+          },
         },
       });
       res.status(200).json({

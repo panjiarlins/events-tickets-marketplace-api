@@ -20,5 +20,5 @@ app.use('/reviews', routers.reviewRouter);
 
 app.listen(PORT, () => {
   console.log(`Server started on port:${PORT}`);
-  db.sequelize.sync({ alter: true });
+  // db.sequelize.sync({ alter: true });
 });
