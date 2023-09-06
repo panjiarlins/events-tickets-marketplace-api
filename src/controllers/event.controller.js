@@ -1,3 +1,4 @@
+const path = require('path');
 const { ResponseError } = require('../errors');
 const { Sequelize, sequelize, User, Event, Voucher } = require('../models');
 
@@ -61,8 +62,38 @@ const eventController = {
     }
   },
 
+  getEventImageByImageName: (req, res) => {
+    try {
+      res.sendFile(
+        path.resolve(
+          __dirname,
+          '..',
+          '..',
+          'public',
+          'images',
+          'eventImages',
+          req.params.imageName
+        ),
+        (err) => {
+          if (err)
+            res.status(404).json({
+              status: 'error',
+              message: 'event image not found',
+            });
+        }
+      );
+    } catch (error) {
+      res.status(error?.statusCode || 500).json({
+        status: 'error',
+        message: error?.message || error,
+      });
+    }
+  },
+
   createEvent: async (req, res) => {
     try {
+      req.body.imageName = req.file.filename;
+      req.body.startAt = +req.body.startAt;
       const userData = await User.findByPk(req.body.userId);
       if (!userData) throw new ResponseError('user not found', 404);
 

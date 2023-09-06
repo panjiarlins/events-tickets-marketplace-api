@@ -2,6 +2,25 @@ const Joi = require('joi');
 const { ResponseError } = require('../../errors');
 
 const eventValidator = {
+  getEventImageById: (req, res, next) => {
+    try {
+      const schema = Joi.object({
+        imageName: Joi.string().required(),
+      });
+
+      const result = schema.validate(req.params);
+      if (result.error)
+        throw new ResponseError(result.error?.message || result.error, 400);
+
+      next();
+    } catch (error) {
+      res.status(error?.statusCode || 500).json({
+        status: 'error',
+        message: error?.message || error,
+      });
+    }
+  },
+
   getByEventId: (req, res, next) => {
     try {
       const schema = Joi.object({
@@ -23,10 +42,9 @@ const eventValidator = {
 
   createEvent: (req, res, next) => {
     try {
-      const schema = Joi.object({
+      const schemaBody = Joi.object({
         title: Joi.string().required(),
         userId: Joi.string().guid().required(),
-        imageUrl: Joi.string().required(),
         city: Joi.string().required(),
         address: Joi.string().required(),
         description: Joi.string().required(),
@@ -35,9 +53,20 @@ const eventValidator = {
         startAt: Joi.date().timestamp().required(),
       });
 
-      const result = schema.validate(req.body);
-      if (result.error)
-        throw new ResponseError(result.error?.message || result.error, 400);
+      const resultBody = schemaBody.validate(req.body);
+      if (resultBody.error)
+        throw new ResponseError(
+          resultBody.error?.message || resultBody.error,
+          400
+        );
+
+      const schemaFile = Joi.required().label('eventImage');
+      const resultFile = schemaFile.validate(req.file);
+      if (resultFile.error)
+        throw new ResponseError(
+          resultFile.error?.message || resultBody.error,
+          400
+        );
 
       next();
     } catch (error) {
@@ -82,7 +111,6 @@ const eventValidator = {
 
       const schemaBody = Joi.object({
         title: Joi.string().optional(),
-        imageUrl: Joi.string().optional(),
         userId: Joi.string().guid().optional(),
         city: Joi.string().optional(),
         address: Joi.string().optional(),
