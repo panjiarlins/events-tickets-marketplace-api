@@ -86,9 +86,22 @@ const userController = {
         expiresIn: '1h',
       });
 
+      // get user data
+      const userData = await User.findByPk(result.id, {
+        attributes: { exclude: ['password', 'profileImage'] },
+        include: [
+          { model: Referral },
+          {
+            model: Event,
+            include: [{ model: Voucher }],
+          },
+        ],
+      });
+      if (!userData) throw new ResponseError('user not found', 404);
+
       res.status(200).json({
         status: 'success',
-        data: { token },
+        data: { token, user: userData },
       });
     } catch (error) {
       res.status(error?.statusCode || 500).json({
