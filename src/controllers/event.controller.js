@@ -123,7 +123,6 @@ const eventController = {
             where: { id },
             fields: [
               'title',
-              'imageUrl',
               'city',
               'address',
               'description',

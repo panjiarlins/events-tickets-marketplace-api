@@ -5,7 +5,7 @@ const path = require('path');
 const { ResponseError } = require('../../errors');
 
 const eventMulter = {
-  eventImageUploader: ({ destinationFolder = '', prefix = '' }) => {
+  eventImageUploader: () => {
     const storageConfig = multer.diskStorage({
       destination: (req, file, cb) => {
         cb(
@@ -17,16 +17,16 @@ const eventMulter = {
             '..',
             'public',
             'images',
-            destinationFolder
+            'eventImages'
           )
         );
       },
       filename: (req, file, cb) => {
         const fileExtention = file.mimetype.split('/')[1];
-        const filename = `${prefix}_${moment().format(
+        const filename = `eventImage_${moment().format(
           'YYYY-MM-DD-HH-mm-ss'
         )}.${fileExtention}`;
-        console.log(filename);
+
         cb(null, filename);
       },
     });
