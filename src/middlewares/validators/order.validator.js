@@ -49,7 +49,7 @@ const orderValidator = {
         id: Joi.number().integer().min(1).required(),
       }).required();
 
-      const result = schema.validate(req.body);
+      const result = schema.validate(req.params);
       if (result.error)
         throw new ResponseError(result.error?.message || result.error, 400);
 
@@ -68,7 +68,7 @@ const orderValidator = {
         id: Joi.number().integer().min(1).required(),
       }).required();
 
-      const result = schema.validate(req.body);
+      const result = schema.validate(req.params);
       if (result.error)
         throw new ResponseError(result.error?.message || result.error, 400);
 

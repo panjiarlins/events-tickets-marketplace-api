@@ -97,18 +97,19 @@ const orderController = {
           const referralData = await userData.getReferral({ transaction: t });
           if (referralData.point > 0 && totalPayment > 0) {
             // referral point usage
-            totalPayment = Math.max(totalPayment - referralData.point, 0);
             referralPointUsage = Math.min(totalPayment, referralData.point);
             await referralData.increment(
               { point: -referralPointUsage },
               { transaction: t }
             );
+            totalPayment -= referralPointUsage;
           }
 
           // create order
           const orderData = await Order.create(
             {
               ...req.body,
+              isPaid: totalPayment <= 0,
               referralPointUsage,
             },
             {
@@ -118,6 +119,7 @@ const orderController = {
                 'quantity',
                 'voucherCode',
                 'referralPointUsage',
+                'isPaid',
               ],
               transaction: t,
             }
@@ -144,14 +146,11 @@ const orderController = {
     try {
       const [orderData] = await Order.update(
         { isPaid: true },
-        { where: { id: req.body.id } }
+        { where: { id: req.params.id } }
       );
       if (orderData === 0) throw new ResponseError('order not found', 404);
 
-      res.status(200).json({
-        status: 'success',
-        data: orderData,
-      });
+      res.sendStatus(204);
     } catch (error) {
       res.status(error?.statusCode || 500).json({
         status: 'error',
@@ -162,7 +161,7 @@ const orderController = {
 
   sendPaymentEmail: async (req, res) => {
     try {
-      const orderData = await Order.findByPk(req.body.id, {
+      const orderData = await Order.findByPk(req.params.id, {
         include: [
           {
             model: User,
