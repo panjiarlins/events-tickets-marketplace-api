@@ -7,14 +7,14 @@ const { eventValidator } = require('../middlewares/validators');
 // GET all events
 router.get('/', eventController.getAllEvents);
 
-// GET event by eventId
-router.get('/:id', eventValidator.getByEventId, eventController.getEventById);
-
 // GET eventImage by imageName
 router.get('/event-image/:imageName', eventController.getEventImageByImageName);
 
 // GET events by city
 router.get('/search', eventController.getEventsByCity);
+
+// GET event by eventId
+router.get('/:id', eventValidator.getByEventId, eventController.getEventById);
 
 // POST new event
 router.post(
