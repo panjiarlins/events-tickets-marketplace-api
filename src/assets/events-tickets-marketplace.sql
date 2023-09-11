@@ -1,3 +1,7 @@
+CREATE DATABASE `events-tickets-marketplace-api`;
+
+USE `events-tickets-marketplace-api`;
+
 CREATE TABLE `Users` (
   `id` varchar(255) PRIMARY KEY,
   `firstName` varchar(255) NOT NULL,
@@ -59,7 +63,7 @@ CREATE TABLE `EventVouchers` (
 CREATE TABLE `Orders` (
   `id` integer PRIMARY KEY,
   `userId` varchar(255) NOT NULL,
-  `voucherCode` varchar(255) NOT NULL,
+  `voucherCode` varchar(255),
   `eventId` integer NOT NULL,
   `quantity` integer NOT NULL,
   `referralPointUsage` float NOT NULL,
