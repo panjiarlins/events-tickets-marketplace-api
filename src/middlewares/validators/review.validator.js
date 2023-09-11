@@ -26,7 +26,7 @@ const reviewValidator = {
       const schema = Joi.object({
         orderId: Joi.number().integer().min(1).required(),
         comment: Joi.string().required(),
-        rating: Joi.number().min(0).required(),
+        rating: Joi.number().min(1).max(5).required(),
       }).required();
 
       const result = schema.validate(req.body);
